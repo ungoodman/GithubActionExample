@@ -1,4 +1,4 @@
-package com.github.ungoodman.gitlabcicdsample;
+package com.github.ungoodman.github.action.example;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

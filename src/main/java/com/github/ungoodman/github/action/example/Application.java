@@ -1,4 +1,4 @@
-package com.github.ungoodman.gitlabcicdsample;
+package com.github.ungoodman.github.action.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

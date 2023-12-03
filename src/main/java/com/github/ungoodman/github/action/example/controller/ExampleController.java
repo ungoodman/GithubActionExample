@@ -1,4 +1,4 @@
-package com.github.ungoodman.gitlabcicdsample.controller;
+package com.github.ungoodman.github.action.example.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
