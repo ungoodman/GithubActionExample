@@ -1,12 +1,4 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Java Package with Maven
+name: Spring Boot Docker Image CI
 
 on:
   pull_request:
@@ -19,17 +11,41 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set up JDK 17
+
+    - name: Setup JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        
-    - name: Build with Maven
-      run: mvn clean install    
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Setup Docker image name
+      id: docker-image-name
+      run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          APP_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - uses: docker/setup-buildx-action@v1
+
+    - name: Build Docker image and push
+      id: build
+      uses: docker/build-push-action@v2
+      continue-on-error: false
+      with:
+        context: .
+        file: ./Dockerfile
+        push: ture
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ steps.docker-image-name.outputs.app_name }}:dev
+
+      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
