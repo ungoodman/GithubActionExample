@@ -27,13 +27,12 @@ jobs:
       run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           APP_NAME=$(./mvnw spring-boot:show-application-banner | grep "Application:" | awk '{print $2}')
-          echo "app-name = $APP_NAME"
 
     - name: Login to Docker Hub
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        DOCKER_IMAGE_NAME: $APP_NAME
+        DOCKER_IMAGE_NAME: github-action-example
       run: | 
         echo "image-name = $DOCKER_USER/$DOCKER_IMAGE_NAME:dev"
         docker login -u $DOCKER_USER -p $DOCKER_PASS
