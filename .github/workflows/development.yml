@@ -36,7 +36,7 @@ jobs:
       run: | 
         echo "image-name = $DOCKER_USER/$DOCKER_IMAGE_NAME:dev"
         docker login -u $DOCKER_USER -p $DOCKER_PASS
-        docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_IMAGE_NAME:dev
+        docker build . --file Dockerfile --tag $DOCKER_USER/github-action-example:latest
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
