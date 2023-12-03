@@ -33,10 +33,11 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        DOCKER_IMAGE_NAME: ${{ steps.docker-image-name.outputs.app_name }}
       run: | 
-        echo "image-name = $DOCKER_USER/${{ steps.docker-image-name.outputs.app_name }}:dev"
+        echo "image-name = $DOCKER_USER/$DOCKER_IMAGE_NAME:dev"
         docker login -u $DOCKER_USER -p $DOCKER_PASS
-        docker build . --file Dockerfile --tag $DOCKER_USER/${{ steps.docker-image-name.outputs.app_name }}:dev
+        docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_IMAGE_NAME:dev
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
