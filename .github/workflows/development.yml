@@ -27,13 +27,14 @@ jobs:
       run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           APP_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
-          echo APP_NAME
+          echo "app-name = $APP_NAME"
 
     - name: Login to Docker Hub
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
       run: | 
+        echo "image-name = $DOCKER_USER/${{ steps.docker-image-name.outputs.app_name }}:dev"
         docker login -u $DOCKER_USER -p $DOCKER_PASS
         docker build . --file Dockerfile --tag $DOCKER_USER/${{ steps.docker-image-name.outputs.app_name }}:dev
 
