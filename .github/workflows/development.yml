@@ -27,6 +27,7 @@ jobs:
       run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           APP_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout)
+          echo APP_NAME
 
     - name: Login to Docker Hub
       env:
