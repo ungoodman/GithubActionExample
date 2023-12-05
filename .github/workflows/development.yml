@@ -22,21 +22,30 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Setup Docker image name
-      id: docker-image-name
+    - name: Setup Docker
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build Docker image
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_REPOSITORY: github-action-sample
       run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          app_name=github-action-sample
+        docker build -t $DOCKER_USERNAME/$DOCKER_REPOSITORY:$GITHUB_SHA .
+        docker tag $DOCKER_USERNAME/$DOCKER_REPOSITORY:$GITHUB_SHA $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
     - name: Login to Docker Hub
       env:
-        DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
-        DOCKER_PASS: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        DOCKER_IMAGE_NAME: ${{ steps.docker-image-name.outputs.app_name }}
-      run: | 
-        echo "image-name = $DOCKER_USER/$DOCKER_IMAGE_NAME:dev"
-        docker login -u $DOCKER_USER -p $DOCKER_PASS
-        docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_IMAGE_NAME:dev
+        DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+    - name: Push Docker image to Docker Hub
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_REPOSITORY: github-action-sample
+      run: |
+          docker push $DOCKER_USERNAME/$DOCKER_REPOSITORY:$GITHUB_SHA
+          docker push $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
